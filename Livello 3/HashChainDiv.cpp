@@ -2,8 +2,6 @@
 #include <fstream>
 using namespace std;
 
-// TODO : FIX BOOL CASE
-
 template <class T> class Solution {
     T* hashTable;
     int N;
