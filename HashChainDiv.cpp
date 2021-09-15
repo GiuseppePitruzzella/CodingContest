@@ -2,6 +2,8 @@
 #include <fstream>
 using namespace std;
 
+// TODO : FIX BOOL CASE
+
 template <class T> class Solution {
     T* hashTable;
     int N;
@@ -65,7 +67,7 @@ int main(int argc, char const *argv[]) {
             S->printSolution(out);
         } else {
             bool *A = new bool[m], item;
-            Solution<bool> *S = new Solution<bool>(n);
+            Solution<int> *S = new Solution<int>(n);
             for (int j = 0; j < m; j++) {
                 in >> item;
                 S->add(item);
