@@ -28,7 +28,30 @@ template <class T> void Solution<T>::printSolution(ofstream &out) {
         out << hashTable[i] << " ";
     out << endl;
 }
+/*
+        _.-"""-._
+    _.-""         ""-._
+  :"-.               .-":
+  '"-_"-._       _.-".-"'
+    ||T+._"-._.-"_.-"|
+    ||:   "-.|.-" : ||
+    || .   ' :|  .  ||
+    ||  .   '|| .   ||
+    ||   ';.:||'    ||
+    ||    '::||     ||
+    ||      )||     ||
+    ||     ':||     ||
+    ||   .' :||.    ||
+    ||  ' . :||.'   ||
+    ||.'-  .:|| -'._||
+  .-'": .::::||:. : "'-.
+  :"-.'::::::||::'  .-":
+   "-."-._"--:"  .-".-"
+      "-._"-._.-".-"
+          "-.|.-"
 
+       J     A     X
+*/ 
 int main(int argc, char const *argv[]) {
     ifstream in("input.txt");
     ofstream out("output.txt");
