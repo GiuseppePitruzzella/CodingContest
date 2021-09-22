@@ -9,9 +9,9 @@ public:
     Solution(T* A, int n);
     void swapElements(int i, int j);
     void insertElement(T k);
-    void maxHeapify(int i);
+    void minHeapify(int i);
     void BuildMaxHeap();
-    T extractMax();
+    T extractMin();
     void printSolution(ofstream &out);
 };
 template <class T> Solution<T>::Solution(T* A, int n) {
@@ -33,7 +33,7 @@ template <class T> void Solution<T>::insertElement(T k) {
         i = getParent(i);
     }
 }
-template <class T> void Solution<T>::maxHeapify(int i) {
+template <class T> void Solution<T>::minHeapify(int i) {
     heapifyCalls++;
     int min = i;
     int left = (2 * i) + 1;
@@ -42,14 +42,14 @@ template <class T> void Solution<T>::maxHeapify(int i) {
     if (right < items && A[min] > A[right]) min = right;
     if (min != i) {
         swapElements(i, min);
-        if (items > 1) maxHeapify(min);
+        if (items > 1) minHeapify(min);
     }
 }
-template <class T> T Solution<T>::extractMax() {
+template <class T> T Solution<T>::extractMin() {
     T minValue = A[0];
     swapElements(0, items - 1);
     items--;
-    if (items > 0) maxHeapify(0);
+    if (items > 0) minHeapify(0);
     return minValue;
 }
 template <class T> void Solution<T>::printSolution(ofstream &out) {
@@ -99,7 +99,7 @@ int main(int argc, char const *argv[]) {
                 in >> op;
                 if (op[1] == ':')
                     S->insertElement(stoi(op.substr(op.find(':') + 1, op.length() - op.find(':'))));
-                else S->extractMax();
+                else S->extractMin();
             }
             S->printSolution(out);
         } else if (type == "double") {
@@ -110,7 +110,7 @@ int main(int argc, char const *argv[]) {
                 in >> op;
                 if (op[1] == ':')
                     S->insertElement(stod(op.substr(op.find(':') + 1, op.length() - op.find(':'))));
-                else S->extractMax();
+                else S->extractMin();
             }
             S->printSolution(out);
         } else if (type == "char") {
@@ -121,7 +121,7 @@ int main(int argc, char const *argv[]) {
                 in >> op;
                 if (op[1] == ':')
                     S->insertElement(op[2]);
-                else S->extractMax();
+                else S->extractMin();
             }
             S->printSolution(out);
         } else {
@@ -132,7 +132,7 @@ int main(int argc, char const *argv[]) {
                 in >> op;
                 if (op[1] == ':')
                     S->insertElement(stoi(op.substr(op.find(':') + 1, op.length() - op.find(':'))));
-                else S->extractMax();
+                else S->extractMin();
             }
             S->printSolution(out);
         }
