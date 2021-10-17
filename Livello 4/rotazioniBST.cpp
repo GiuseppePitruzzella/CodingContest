@@ -93,16 +93,16 @@ template <class T> void BST<T>::del(T data) {
         else if (e->getRight() == NULL)
             Transplant(e, e->getLeft());
         else {
-            Node<T>* y = getMinimum(e->getRight());
+            Node<T>* min = getMinimum(e->getRight());
             
-            if (y->getParent() != e){
-                Transplant(y, y->getRight());
-                y->setRight(e->getRight());
-                y->getRight()->setParent(y);
+            if (min->getParent() != e){
+                Transplant(min, min->getRight());
+                min->setRight(e->getRight());
+                min->getRight()->setParent(min);
             }
-            Transplant(e, y);
-            y->setLeft(e->getLeft());
-            y->getLeft()->setParent(y);
+            Transplant(e, min);
+            min->setLeft(e->getLeft());
+            min->getLeft()->setParent(min);
         }
     }
 }
@@ -129,44 +129,42 @@ template <class T> void BST<T>::print(string printType, ofstream& out) {
 template <class T> void BST<T>::rotate(string rotateType, T data) {
     Node<T>* e = search(data);
     if (e != NULL) {
-        if (rotateType == "left") 
-            leftRotate(e);
-        else if (rotateType == "right")
-            rightRotate(e);
+        if (rotateType == "left") leftRotate(e);
+        else if (rotateType == "right") rightRotate(e);
     }
 }
-template <class T> void BST<T>::leftRotate(Node<T>* y){
-     if(y != NULL){
-        Node<T>* x = y->getRight();
-        Node<T>* z = y->getParent();
-        if (x != NULL){
-            y->setRight(x->getLeft());
-            x->setLeft(y);
+template <class T> void BST<T>::leftRotate(Node<T>* e){
+     if(e != NULL){
+        Node<T>* right = e->getRight();
+        Node<T>* parent = e->getParent();
+        if (right != NULL){
+            e->setRight(right->getLeft());
+            right->setLeft(e);
 
-            Transplant(y, x);
+            Transplant(e, right);
 
-            x->setParent(z);
-            y->setParent(x);
+            right->setParent(parent);
+            e->setParent(right);
 
-            if (y->getRight()) y->getRight()->setParent(y); 
+            if (e->getRight()) e->getRight()->setParent(e); 
         }
     }
 }
 
-template <class T> void BST<T>::rightRotate(Node<T>* y){
-    if (y != NULL) {
-        Node<T>* x = y->getLeft();
-        Node<T>* z = y->getParent();
-        if(x != NULL){
-            y->setLeft(x->getRight());
-            x->setRight(y);
+template <class T> void BST<T>::rightRotate(Node<T>* e){
+    if (e != NULL) {
+        Node<T>* left = e->getLeft();
+        Node<T>* parent = e->getParent();
+        if(left != NULL){
+            e->setLeft(left->getRight());
+            left->setRight(e);
 
-            Transplant(y, x);
+            Transplant(e, left);
             
-            x->setParent(z);
-            y->setParent(x);
+            left->setParent(parent);
+            e->setParent(left);
 
-            if (y->getLeft()) y->getLeft()->setParent(y);
+            if (e->getLeft()) e->getLeft()->setParent(e);
         }
     }
 }
@@ -227,7 +225,6 @@ int main(int argc, char const *argv[]) {
             Solution->print(printType, out);
             delete Solution;
         }
-        cout << i << endl;
     }
     return 0;
 }
