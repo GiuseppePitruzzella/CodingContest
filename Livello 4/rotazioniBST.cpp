@@ -30,8 +30,8 @@ public:
     BST() { root = NULL; }
     void insert(T);
     void del(T);
-    void search(T);
-    void getMinimum(Node<T>*);
+    Node<T>* search(T);
+    Node<T>* getMinimum(Node<T>*);
     void print(string, ofstream&);
     void rotate(string, T);
     void leftRotate(Node<T>*);
@@ -42,7 +42,7 @@ template <class T> void BST<T>::Transplant(Node<T>* u, Node<T>* v) {
     if (u->getParent() == NULL)
         root = v;
     else if (u == u->getParent()->getRight())
-        u->getParent()->setLeft(v);
+        u->getParent()->setRight(v);
     else u->getParent()->setLeft(v);
 
     if (v != NULL) v->setParent(u->getParent());
@@ -70,37 +70,52 @@ template <class T> void BST<T>::PostOrder(Node<T>* e, ofstream& out) {
 }
 template <class T> void BST<T>::insert(T data) {
     Node<T>* e = new Node<T>(data);
-    if (root != NULL) {
-        Node<T>* tmp = root, parent = NULL;
-        while (tmp) {
-            parent = tmp;
-            tmp = data < tmp->getData() ? tmp->getLeft() : tmp->getRight();
+    if (root == NULL) {
+        root = e;
+    } else {
+        Node<T>* tmpRoot = root;
+        Node<T>* tmp = NULL;
+        while (tmpRoot != NULL){
+            tmp = tmpRoot;
+            if (data > tmpRoot->getData()) tmpRoot = tmpRoot->getRight();
+            else tmpRoot = tmpRoot->getLeft();
         }
-
-        e->setParent(parent);
-        if (data > parent->getLeft()) parent->setRight(e);
-        else parent->setLeft(e);
-    } else root = e;
+        e->setParent(tmp);
+        if (data > tmp->getData()) tmp->setRight(e);
+        else tmp->setLeft(e);
+    }
 }
 template <class T> void BST<T>::del(T data) {
-    Node<T>* e = search(x);
-    if (e) {
+    Node<T>* e = search(data);
+    if (e != NULL){
         if (e->getLeft() == NULL)
             Transplant(e, e->getRight());
         else if (e->getRight() == NULL)
             Transplant(e, e->getLeft());
         else {
-            Node<T>* min = getMinimum(e->getRight());
-            if (min->getParent() != e) {
-                Transplant(min, min->getRight());
-                min->setRight(e->getRight());
-                min->getRight()->setParent(min)
+            Node<T>* y = getMinimum(e->getRight());
+            
+            if (y->getParent() != e){
+                Transplant(y, y->getRight());
+                y->setRight(e->getRight());
+                y->getRight()->setParent(y);
             }
-            Transplant(e, min);
-            min->setLeft(e->getLeft());
-            min->getLeft()->setParent(min);
+            Transplant(e, y);
+            y->setLeft(e->getLeft());
+            y->getLeft()->setParent(y);
         }
     }
+}
+template <class T> Node<T>* BST<T>::search(T data) {
+    Node<T>* tmp = root;
+    while (tmp != NULL && data != tmp->getData())
+        tmp = data > tmp->getData() ? tmp->getRight() : tmp->getLeft();
+    return tmp;
+}
+template <class T> Node<T>* BST<T>::getMinimum(Node<T>* e) {
+    Node<T>* tmp = e;
+    while (tmp->getLeft() != NULL) tmp = tmp->getLeft();
+    return tmp;
 }
 template <class T> void BST<T>::print(string printType, ofstream& out) {
     if (printType == "preorder") 
@@ -112,44 +127,107 @@ template <class T> void BST<T>::print(string printType, ofstream& out) {
     out << endl;
 }
 template <class T> void BST<T>::rotate(string rotateType, T data) {
-    Node<T>* e = new Node<T>(data);
-    if (e) {
+    Node<T>* e = search(data);
+    if (e != NULL) {
         if (rotateType == "left") 
             leftRotate(e);
         else if (rotateType == "right")
             rightRotate(e);
     }
 }
-template <class T> void BST<T>::leftRotate(Node<T>* e) {
-    if (e) {
-        Node<T>* right = e->getRight();
-        Node<T>* parent = e->getParent();
-        if (right) {
-            e->setRight(right->getLeft());
-            right->setLeft(e);
-            Transplant(e, right);
+template <class T> void BST<T>::leftRotate(Node<T>* y){
+     if(y != NULL){
+        Node<T>* x = y->getRight();
+        Node<T>* z = y->getParent();
+        if (x != NULL){
+            y->setRight(x->getLeft());
+            x->setLeft(y);
 
-            right->setParent(parent);
-            e->setParent(right);
+            Transplant(y, x);
 
-            if (e->getRight()) e->getRight()->setParent(e);
+            x->setParent(z);
+            y->setParent(x);
+
+            if (y->getRight()) y->getRight()->setParent(y); 
         }
     }
 }
-template <class T> void BST<T>::rightRotate(Node<T>* e) {
-    if(e != NULL) {
-        Node<T>* left = e->getLeft();
-        Node<T>* parent = e->getParent();
-        if(left != NULL) {
-            e->setLeft(left->getRight());
-            left->setRight(e);
 
-            Transplant(e, left);
+template <class T> void BST<T>::rightRotate(Node<T>* y){
+    if (y != NULL) {
+        Node<T>* x = y->getLeft();
+        Node<T>* z = y->getParent();
+        if(x != NULL){
+            y->setLeft(x->getRight());
+            x->setRight(y);
+
+            Transplant(y, x);
             
-            left->setParent(parent);
-            e->setParent(left);
+            x->setParent(z);
+            y->setParent(x);
 
-            if (e->getLeft()) e->getLeft()->setParent(e);
+            if (y->getLeft()) y->getLeft()->setParent(y);
         }
     }
+}
+
+int breakIndex(string str) {
+    for (int i = 0; i < str.length(); i++)
+        if (str[i] == ':') return i;
+    return -1;
+}
+string operationType(string str) {
+    return str.substr(0, breakIndex(str));
+}
+string value(string str) {
+    return str.substr(breakIndex(str) + 1, str.length());
+}
+
+int main(int argc, char const *argv[]) {
+    ifstream in("input.txt");
+    ofstream out("output.txt");
+    for (int i = 0; i < 100; i++) {
+        string dataType, printType; in >> dataType;
+        int n, m; 
+        in >> n;
+        in >> m;
+        in >> printType;
+        if (dataType == "int") {
+            BST<int>* Solution = new BST<int>();
+            // Operations
+            for (int j = 0; j < n + m; j++) {
+                string tmp; in >> tmp;
+                string operation = operationType(tmp);
+                if (operation == "ins")
+                    Solution->insert(stoi(value(tmp)));
+                else if (operation == "canc")
+                    Solution->del(stoi(value(tmp)));
+                else if (operation == "right")
+                    Solution->rotate(operation, stoi(value(tmp)));
+                else if (operation == "left")
+                    Solution->rotate(operation, stoi(value(tmp)));
+            }
+            Solution->print(printType, out);
+            delete Solution;
+        } else if (dataType == "double") {
+            BST<double>* Solution = new BST<double>();
+            // Operations
+            for (int j = 0; j < n + m; j++) {
+                string tmp; in >> tmp;
+                string operation = operationType(tmp);
+                if (operation == "ins")
+                    Solution->insert(stod(value(tmp)));
+                else if (operation == "canc")
+                    Solution->del(stod(value(tmp)));
+                else if (operation == "right")
+                    Solution->rotate(operation, stod(value(tmp)));
+                else if (operation == "left")
+                    Solution->rotate(operation, stod(value(tmp)));
+            } 
+            Solution->print(printType, out);
+            delete Solution;
+        }
+        cout << i << endl;
+    }
+    return 0;
 }
